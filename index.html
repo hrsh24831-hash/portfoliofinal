@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yash Hayaran | Frontend Developer Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght:700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'], // For dramatic headings
+                    },
+                    colors: {
+                        'primary-dark': '#0F172A', // Deep Charcoal / Slate-900
+                        'secondary-light': '#F8FAFC', // Off-White / Slate-50
+                        'accent': '#00C9A7', // Vibrant Teal/Cyan
+                        'accent-dark': '#00A78F', // Darker Teal for hover
+                        'light-gray-bg': '#F4F7F6', // A very light, subtle background
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-50px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(50px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        }
+                    },
+                    animation: {
+                        fadeInUp: 'fadeInUp 0.8s ease-out forwards',
+                        fadeIn: 'fadeIn 0.8s ease-out forwards',
+                        slideInLeft: 'slideInLeft 0.8s ease-out forwards',
+                        slideInRight: 'slideInRight 0.8s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles for aesthetic polish and smooth scrolling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F7F6; /* A softer, very light gray background */
+            scroll-behavior: smooth;
+            color: #0F172A; /* Primary-dark text color */
+        }
+        
+        /* General Fade-in/Slide-up animation on section load */
+        .animated-section {
+            opacity: 0;
+            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(30px); /* Slightly more pronounced slide */
+        }
+        
+        /* Styles for interactive cards: better shadow and subtle lift (Used for Projects & Certifications) */
+        .interactive-card {
+            background-color: white; /* Always white for contrast */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease-in-out;
+            border: 1px solid #E2E8F0; /* Subtle light border */
+        }
+        .interactive-card:hover {
+            transform: translateY(-8px); /* More pronounced lift for larger cards */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #00C9A7; /* Accent border on hover */
+        }
+
+        /* Specific style for MacBook Dock Zoom effect (Used for Skills) */
+        .dock-zoom-card {
+            /* Inherits base styles from interactive-card, just overrides the hover behavior */
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease-in-out;
+            position: relative; /* Needed for z-index to work correctly */
+        }
+        .dock-zoom-card:hover {
+            transform: scale(1.2); /* Strong zoom effect */
+            box-shadow: 0 30px 40px -15px rgba(0, 0, 0, 0.4); /* Very strong shadow for floating look */
+            z-index: 20; /* Ensures the zoomed card appears above its neighbors */
+            border-color: #00C9A7;
+        }
+
+        /* Styling for the typewriter cursor */
+        .typewriter-cursor {
+            border-right: 3px solid #00C9A7; /* Thicker, accent-colored cursor */
+            animation: blink 0.75s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: #00C9A7 }
+        }
+        
+        /* Utility for centering content */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        /* Custom image styling for hero background (MADE AGGRESSIVELY DARKER) */
+        #hero-background {
+            background-image: url('https://source.unsplash.com/random/1920x1080/?modern-workspace,coding,designer-desk,abstract-tech'); /* Dynamic image URL */
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Place behind text content */
+            filter: grayscale(100%) brightness(0.2); /* AGGRESSIVELY DARKENS THE IMAGE */
+            opacity: 0.9; /* Adds a final layer of darkening */
+        }
+
+        /* Specific animation for skill cards (initially hidden) */
+        .skill-card-animated {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        /* When visible, apply animation */
+        .skill-card-animated.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navigation link underline effect */
+        .nav-link-underline {
+            position: relative;
+        }
+        .nav-link-underline::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: #00C9A7; /* Accent color */
+            transition: width 0.3s ease;
+        }
+        .nav-link-underline:hover::after {
+            width: 100%;
+            left: 0;
+            background: #00C9A7; /* Accent color */
+        }
+
+        /* Ensure smooth transitions for sections */
+        .section-header {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .section-header.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-text-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .about-text-left.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .philosophy-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .philosophy-right.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Custom style for timeline item */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid #E2E8F0;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0.5rem;
+            left: -8px;
+            width: 14px;
+            height: 14px;
+            background-color: #00C9A7;
+            border-radius: 50%;
+            border: 2px solid white; /* Ensures it stands out against the background */
+            transition: all 0.3s ease-in-out;
+        }
+        .timeline-item:hover::before {
+            background-color: #0F172A;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-lg transition-all duration-300 ease-in-out py-4">
+        <nav class="section-container flex justify-between items-center">
+            <a href="#hero" class="text-3xl font-extrabold text-primary-dark hover:text-accent transition-colors duration-300 tracking-wider font-serif">
+                Port<span class="text-accent"></span>folio<span class="text-accent">.</span>
+            </a>
+            <div class="space-x-8 hidden md:flex font-semibold text-primary-dark text-lg">
+                <a href="#about" class="nav-link-underline hover:text-accent transition-colors duration-300">
+                    About
+                </a>
+                <a href="#education" class="nav-link-underline hover:text-accent transition-colors duration-300">
+                    Education
+                </a>
+                <a href="#certifications" class="nav-link-underline hover:text-accent transition-colors duration-300">
+                    Certificates
+                </a>
+                <a href="#skills" class="nav-link-underline hover:text-accent transition-colors duration-300">
+                    Skills
+                </a>
+                <a href="#projects" class="nav-link-underline hover:text-accent transition-colors duration-300">
+                    Projects
+                </a>
+                <a href="#contact" class="nav-link-underline hover:text-accent transition-colors duration-300">
+                    Contact
+                </a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-secondary-light transition-colors duration-200 text-primary-dark">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden fixed w-full bg-white shadow-xl z-40">
+            <div class="flex flex-col space-y-3 p-4 font-medium text-primary-dark text-lg">
+                <a href="#about" class="p-3 hover:bg-light-gray-bg rounded-md transition-colors duration-200" onclick="closeMenu()">About</a>
+                <a href="#education" class="p-3 hover:bg-light-gray-bg rounded-md transition-colors duration-200" onclick="closeMenu()">Education</a>
+                <a href="#certifications" class="p-3 hover:bg-light-gray-bg rounded-md transition-colors duration-200" onclick="closeMenu()">Certificates</a>
+                <a href="#skills" class="p-3 hover:bg-light-gray-bg rounded-md transition-colors duration-200" onclick="closeMenu()">Skills</a>
+                <a href="#projects" class="p-3 hover:bg-light-gray-bg rounded-md transition-colors duration-200" onclick="closeMenu()">Projects</a>
+                <a href="#contact" class="p-3 hover:bg-light-gray-bg rounded-md transition-colors duration-200" onclick="closeMenu()">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="relative min-h-screen flex items-center justify-center text-white overflow-hidden bg-primary-dark">
+            <div id="hero-background" class="w-full h-full absolute"></div>
+            <div class="relative z-10 text-center px-4 animate-[fadeIn_1.5s_ease-out_forwards]">
+                
+                <div class="mb-4 mx-auto w-36 h-36 sm:w-48 sm:h-48 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden shadow-2xl border-4 border-accent">
+                    <img src="assets/hi.png" alt="Profile Picture" class="w-full h-full object-cover">
+                </div>
+               <h1 style="font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 600;">
+    Yash Hayaran
+</h1>
+                <div class="h-12 sm:h-14 lg:h-16 my-4">
+                    <p id="typewriter-text" class="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-200 inline-block min-w-[30px]"></p>
+                </div>
+                <p class="mt-8 text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+FRONTEND DEVELOPER 					</p>
+                <div class="mt-12 flex justify-center space-x-6">
+                    <a href="assets/Yash_Hayaran_Portfolio.docx" download="yash portfolio" class="inline-block px-8 py-4 bg-white text-primary-dark font-bold rounded-full shadow-2xl hover:bg-gray-200 transform hover:scale-[1.05] transition-all duration-300 ease-in-out text-xl tracking-wide border-2 border-primary-dark">
+                        Download Resume
+                    </a>
+                    <a href="#projects" class="inline-block px-8 py-4 bg-accent text-primary-dark font-bold rounded-full shadow-2xl hover:bg-accent-dark transform hover:scale-[1.05] transition-all duration-300 ease-in-out text-xl tracking-wide">
+                        Explore Work
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 bg-white">
+            <div class="section-container">
+                <h2 class="text-5xl font-extrabold mb-4 text-primary-dark section-header">About Me</h2>
+                <div class="h-1 w-20 bg-accent mb-16 section-header" data-animation-delay="0.2"></div>
+                <div class="grid md:grid-cols-2 gap-16 items-start">
+                    <div class="about-text-left">
+                        <p class="text-xl text-gray-700 mb-6 leading-relaxed">
+                            My focus is on designing and developing experiences that are both beautiful and incredibly intuitive. I translate complex user needs into simple, elegant digital solutions. Every line of code and pixel of design is intentional, aiming for maximum impact with minimal complexity.
+                        </p>
+                        <p class="text-lg text-gray-600">
+                            The communication aspect of development is key—I strive to clearly articulate technical challenges and design choices to ensure seamless collaboration with clients and teams. Let's create impactful work together that truly stands out.
+                        </p>
+                    </div>
+                    <div class="philosophy-right flex flex-col items-start"> <div class="w-full mb-8 flex justify-center md:justify-start"> <div class="w-64 h-64 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden shadow-2xl border-4 border-accent">
+                                <img src="assets/hi.png" alt="Professional Portrait" class="w-full h-full object-cover">  
+                            </div>
+                        </div>
+                        <div class="p-10 rounded-3xl border border-gray-100 shadow-xl bg-light-gray-bg w-full"> 
+                            <h3 class="text-3xl font-bold mb-6 text-accent font-serif">My Philosophy</h3>
+                            <ul class="text-gray-700 space-y-4 text-lg">
+                                <li class="flex items-center"><span class="text-accent mr-4 text-2xl">&mdash;</span> Design Simplicity</li>
+                                <li class="flex items-center"><span class="text-accent mr-4 text-2xl">&mdash;</span> Performance First</li>
+                                <li class="flex items-center"><span class="text-accent mr-4 text-2xl">&mdash;</span> Atomic Components</li>
+                                <li class="flex items-center"><span class="text-accent mr-4 text-2xl">&mdash;</span> Continuous Learning</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       
+        <section id="education" class="py-24 bg-light-gray-bg">
+            <div class="section-container">
+                <h2 class="text-5xl font-extrabold mb-4 text-primary-dark section-header">Education</h2>
+                <div class="h-1 w-20 bg-accent mb-16 section-header" data-animation-delay="0.2"></div>
+
+                <div class="max-w-4xl mx-auto space-y-12">
+                    
+                    <div class="timeline-item animated-section" data-animation-delay="0.4">
+                        <p class="text-sm font-semibold text-accent uppercase tracking-wider mb-1">2025 - Present</p>
+                        <h3 class="text-3xl font-bold mb-1 text-primary-dark font-serif">Master of Computer Applications (MCA)</h3>
+                        <p class="text-xl text-gray-700 mb-2">Lovely Professional University</p>
+                        <p class="text-gray-600">Focus: Advanced Web Technologies, Data Structures, and Software Engineering.</p>
+                    </div>
+
+                    <div class="timeline-item animated-section" data-animation-delay="0.6">
+                        <p class="text-sm font-semibold text-accent uppercase tracking-wider mb-1">2022 - 2025</p>
+                        <h3 class="text-3xl font-bold mb-1 text-primary-dark font-serif">Bachelor of Computer Applications (BCA)</h3>
+                        <p class="text-xl text-gray-700 mb-2">Bundelkhand University</p>
+                        <p class="text-gray-600">Achieved a strong foundation in Programming Fundamentals (C, C++, Java) and Database Management Systems.</p>
+                    </div>
+
+                    <div class="timeline-item animated-section" data-animation-delay="0.8">
+                        <p class="text-sm font-semibold text-accent uppercase tracking-wider mb-1">2020</p>
+                        <h3 class="text-3xl font-bold mb-1 text-primary-dark font-serif">Higher Secondary Certificate (HSC)</h3>
+                        <p class="text-xl text-gray-700 mb-2">Modern Public School (Science Stream)</p>
+                        <p class="text-gray-600">Completed 12th grade with a focus on Physics, Chemistry, and Mathematics.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        
+        <section id="certifications" class="py-24 bg-white">
+            <div class="section-container">
+                <h2 class="text-5xl font-extrabold mb-4 text-primary-dark section-header">Certifications & Achievements</h2>
+                <div class="h-1 w-20 bg-accent mb-16 section-header" data-animation-delay="0.2"></div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <div class="p-6 rounded-3xl interactive-card animated-section" data-animation-delay="0.4">
+                        <img src="assets/certificate hackathon.jpg" alt="Hackathon Certificate Cover" class="h-40 w-full object-cover rounded-xl mb-4 shadow-md border border-gray-100">
+                        <p class="text-sm font-semibold text-accent uppercase tracking-wider mb-1">Recent Participation</p>
+                        <h3 class="text-xl font-bold mb-2 text-primary-dark">24-Hour National Hackathon</h3>
+                        <p class="text-gray-600 text-base mb-4">Successfully developed a functional **Frontend Prototype** for a complex challenge statement focusing on sustainable transport solutions.</p>
+                        <a href="assets/certificate hackathon.jpg" target="_blank" class="text-accent hover:text-accent-dark font-semibold transition-colors duration-300 flex items-center text-base">
+                            View Certificate 
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-4l-5 5m0 0h4m-4 0v4"></path></svg>
+                        </a>
+                    </div>
+                    
+                    <div class="p-6 rounded-3xl interactive-card animated-section opacity-50" data-animation-delay="0.6">
+                        <div class="h-40 w-full bg-gray-200 rounded-xl mb-4 flex items-center justify-center">
+                            <span class="text-gray-500 font-medium">Upcoming Certification</span>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-1">Planned</p>
+                        <h3 class="text-xl font-bold mb-2 text-gray-500">Professional React Developer</h3>
+                        <p class="text-gray-400 text-base mb-4">Focusing on advanced performance, testing, and state management (e.g., Redux Toolkit).</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section id="skills" class="py-24 bg-secondary-light">
+            <div class="section-container">
+                <h2 class="text-5xl font-extrabold mb-4 text-center text-primary-dark section-header">Tech Stack</h2>
+                <div class="h-1 w-20 bg-accent mx-auto mb-16 section-header" data-animation-delay="0.2"></div>
+
+                <div id="skills-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
+                    <div class="p-6 rounded-xl text-center interactive-card skill-card-animated dock-zoom-card">
+                        <p class="text-5xl mb-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React" class="h-12 mx-auto filter grayscale hover:grayscale-0 transition-all duration-300">
+                        </p>
+                        <p class="font-semibold text-primary-dark mt-2">React/Next.js</p>
+                    </div>
+                    <div class="p-6 rounded-xl text-center interactive-card skill-card-animated dock-zoom-card">
+                        <p class="text-5xl mb-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg" alt="TypeScript" class="h-12 mx-auto filter grayscale hover:grayscale-0 transition-all duration-300">
+                        </p>
+                        <p class="font-semibold text-primary-dark mt-2">TypeScript</p>
+                    </div>
+                    <div class="p-6 rounded-xl text-center interactive-card skill-card-animated dock-zoom-card">
+                        <p class="text-5xl mb-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" alt="Tailwind CSS" class="h-12 mx-auto filter grayscale hover:grayscale-0 transition-all duration-300">
+                        </p>
+                        <p class="font-semibold text-primary-dark mt-2">Tailwind CSS</p>
+                    </div>
+                    <div class="p-6 rounded-xl text-center interactive-card skill-card-animated dock-zoom-card">
+                        <p class="text-5xl mb-3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" alt="Node.js" class="h-12 mx-auto filter grayscale hover:grayscale-0 transition-all duration-300">
+                        </p>
+                        <p class="font-semibold text-primary-dark mt-2">Node.js / Express</p>
+                    </div>
+                    <div class="p-6 rounded-xl text-center interactive-card skill-card-animated dock-zoom-card">
+                        <p class="text-5xl mb-3">
+                            <img src="https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg" alt="Cloud" class="h-12 mx-auto filter grayscale hover:grayscale-0 transition-all duration-300">
+                        </p>
+                        <p class="font-semibold text-primary-dark mt-2">Cloud Functions</p>
+                    </div>
+                    <div class="p-6 rounded-xl text-center interactive-card skill-card-animated dock-zoom-card">
+                        <p class="text-5xl mb-3">
+                            <img src="https://www.vectorlogo.zone/logos/figma/figma-icon.svg" alt="Figma" class="h-12 mx-auto filter grayscale hover:grayscale-0 transition-all duration-300">
+                        </p>
+                        <p class="font-semibold text-primary-dark mt-2">Figma</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-24 bg-white">
+            <div class="section-container">
+                <h2 class="text-5xl font-extrabold mb-4 text-primary-dark section-header">Featured Projects</h2>
+                <div class="h-1 w-20 bg-accent mb-16 section-header" data-animation-delay="0.2"></div>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="p-8 rounded-3xl interactive-card animated-section" data-animation-delay="0.2">
+                        <img src="assets/hi2.png" alt="SaaS Analytics Platform" class="h-64 w-full object-cover rounded-xl mb-6 shadow-md">
+                        <h3 class="text-3xl font-bold mb-3 text-primary-dark font-serif">Smart Credit Manager Platform</h3>
+                        <p class="text-gray-600 mb-6 text-lg">
+A React and Tailwind SPA built for small businesses to efficiently track and visualize customer credit and outstanding balances using dynamic charts. 					</p>
+                        <a href="#" class="text-accent hover:text-accent-dark font-semibold transition-colors duration-300 flex items-center text-lg">
+                            View Case Study 
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+
+                    <div class="p-8 rounded-3xl interactive-card animated-section" data-animation-delay="0.4">
+                        <img src="assets/hi3.png" alt="Minimalist E-commerce Site" class="h-64 w-full object-cover rounded-xl mb-6 shadow-md">
+                        <h3 class="text-3xl font-bold mb-3 text-primary-dark font-serif">Full-featured E-commerce Site (Frontend)</h3>
+                        <p class="text-gray-600 mb-6 text-lg">
+A high-performance, fully responsive e-commerce storefront featuring comprehensive product filtering, cart management, and multi-step checkout using React and Tailwind CSS. 					 					 	</p>
+                        <a href="#" class="text-accent hover:text-accent-dark font-semibold transition-colors duration-300 flex items-center text-lg">
+                            View Live Demo
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 bg-secondary-light">
+            <div class="section-container">
+                <h2 class="text-5xl font-extrabold mb-4 text-center text-primary-dark section-header">Let's Connect</h2>
+                <div class="h-1 w-20 bg-accent mx-auto mb-16 section-header" data-animation-delay="0.2"></div>
+                <p class="text-xl text-center text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    I'm currently accepting new projects and collaborations. Drop me a message and let's turn your idea into reality!
+                </p>
+
+                <div class="max-w-xl mx-auto bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 animated-section" data-animation-delay="0.4">
+                    <form onsubmit="handleFormSubmit(event)">
+                        <div class="mb-6">
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                            <input type="text" id="name" name="name" required class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:ring-accent-dark/50 focus:ring-2 transition duration-200 outline-none text-lg">
+                        </div>
+                        <div class="mb-6">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="email" name="email" required class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:ring-accent-dark/50 focus:ring-2 transition duration-200 outline-none text-lg">
+                        </div>
+                        <div class="mb-8">
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea id="message" name="message" rows="6" required class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:ring-accent-dark/50 focus:ring-2 transition duration-200 outline-none text-lg"></textarea>
+                        </div>
+                        <button type="submit" class="w-full px-8 py-4 bg-primary-dark text-white font-bold rounded-full shadow-lg hover:bg-slate-700 transform hover:scale-[1.01] transition-all duration-300 ease-in-out text-xl tracking-wide">
+                            Send Message
+                        </button>
+                    </form>
+                    <div id="contact-message" class="mt-6 text-center text-lg font-semibold hidden"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-12 bg-primary-dark text-gray-400">
+        <div class="section-container text-center">
+            <a href="#hero" class="text-4xl font-extrabold text-accent mb-4 block font-serif">Y<span class="text-white">.</span>H<span class="text-white">.</span></a>
+            <p class="mb-6 text-lg">&copy; 2025 Yash Hayaran. Crafted with **clean code** and passion.</p>
+            <div class="space-x-8 text-xl">
+                <a href="#" class="hover:text-accent transition-colors duration-300">LinkedIn</a>
+                <a href="#" class="hover:text-accent transition-colors duration-300">GitHub</a>
+                <a href="#" class="hover:text-accent transition-colors duration-300">Dribbble</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- JAVASCRIPT FOR INTERACTIVITY AND AESTHETICS ---
+
+        // 1. Enhanced Typewriter Effect (Cycling through phrases)
+        const typewriterElement = document.getElementById('typewriter-text');
+        const phrases = [
+            "Designing future-ready applications.",
+            "Where elegance meets performance." 
+        ];
+
+        const TYPING_SPEED = 60; 
+        const DELETING_SPEED = 30; 
+        const PAUSE_AFTER_TYPE = 2000; 
+        const PAUSE_BEFORE_NEXT = 500; 
+
+        let loopNum = 0;
+        let phraseIndex = 0;
+        let isDeleting = false;
+
+        function typeEraseLoop() {
+            const currentPhrase = phrases[loopNum % phrases.length];
+            let delta = TYPING_SPEED; 
+
+            if (isDeleting) {
+                phraseIndex = Math.max(0, phraseIndex - 1);
+                typewriterElement.textContent = currentPhrase.substring(0, phraseIndex);
+                delta = DELETING_SPEED; 
+            } else {
+                phraseIndex = Math.min(currentPhrase.length, phraseIndex + 1);
+                typewriterElement.textContent = currentPhrase.substring(0, phraseIndex);
+                delta = TYPING_SPEED;
+            }
+
+            if (typewriterElement.textContent === currentPhrase) {
+                isDeleting = true;
+                delta = PAUSE_AFTER_TYPE; 
+            } else if (isDeleting && typewriterElement.textContent === '') {
+                isDeleting = false;
+                loopNum++; 
+                phraseIndex = 0;
+                delta = PAUSE_BEFORE_NEXT; 
+            }
+
+            if (!typewriterElement.classList.contains('typewriter-cursor')) {
+                   typewriterElement.classList.add('typewriter-cursor');
+            }
+
+            setTimeout(typeEraseLoop, delta);
+        }
+
+
+        // 2. Intersection Observer for general Fade-in/Slide-up animation (on scroll)
+        const generalAnimatedSections = document.querySelectorAll('.animated-section');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = parseFloat(entry.target.getAttribute('data-animation-delay')) || 0;
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, delay * 1000); 
+                    // sectionObserver.unobserve(entry.target); // Keep observing if you want it to re-animate on scroll up/down
+                } else {
+                    // Optional: Reset animation when out of view (if you want repeat on scroll)
+                    // entry.target.style.opacity = '0';
+                    // entry.target.style.transform = 'translateY(30px)';
+                }
+            });
+        }, {
+            rootMargin: '0px 0px -150px 0px', 
+            threshold: 0.1 
+        });
+
+        generalAnimatedSections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        // Specific observers for About section for finer control
+        const aboutTextLeft = document.querySelector('.about-text-left');
+        const philosophyRight = document.querySelector('.philosophy-right');
+        const sectionHeaders = document.querySelectorAll('.section-header');
+
+        const headerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = parseFloat(entry.target.getAttribute('data-animation-delay')) || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('is-visible');
+                    }, delay * 1000);
+                    // headerObserver.unobserve(entry.target);
+                } else {
+                    // entry.target.classList.remove('is-visible');
+                }
+            });
+        }, { rootMargin: '0px 0px -100px 0px', threshold: 0.1 });
+
+        sectionHeaders.forEach(header => headerObserver.observe(header));
+
+        const aboutObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (aboutTextLeft) aboutTextLeft.classList.add('is-visible');
+                    if (philosophyRight) philosophyRight.classList.add('is-visible');
+                    // aboutObserver.unobserve(entry.target);
+                } else {
+                    // if (aboutTextLeft) aboutTextLeft.classList.remove('is-visible');
+                    // if (philosophyRight) philosophyRight.classList.remove('is-visible');
+                }
+            });
+        }, { rootMargin: '0px 0px -150px 0px', threshold: 0.1 });
+
+        if (document.getElementById('about')) aboutObserver.observe(document.getElementById('about'));
+
+
+        // 3. Staggered Animation for Skill Cards (Tech Stack Symbols)
+        const skillCards = document.querySelectorAll('.skill-card-animated');
+        const skillsSection = document.getElementById('skills');
+
+        const skillObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    skillCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('is-visible');
+                        }, index * 100); 
+                    });
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, {
+            rootMargin: '0px 0px -150px 0px', 
+            threshold: 0.1
+        });
+
+        if (skillsSection) {
+            skillObserver.observe(skillsSection);
+        }
+
+
+        // 4. Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        function closeMenu() {
+            mobileMenu.classList.add('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+
+
+        // 5. Simple Form Submission Handler (No actual send, just UI confirmation)
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const messageDiv = document.getElementById('contact-message');
+            messageDiv.textContent = 'Message Received! I will be in touch shortly.';
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.add('text-accent');
+            event.target.reset();
+        }
+
+        // Start the typewriter loop when the window loads
+        window.onload = () => {
+            typeEraseLoop();
+        };
+    </script>
+</body>
+</html> 
